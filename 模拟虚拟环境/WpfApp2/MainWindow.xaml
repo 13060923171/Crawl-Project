@@ -1,0 +1,68 @@
+﻿<Window x:Class="WpfApp2.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp2"
+        xmlns:Demo_3_4_WpfControlLibrary="clr-namespace:Demo_3_4_WpfControlLibrary;assembly=Demo_3_4_WpfControlLibrary"
+        mc:Ignorable="d"
+         Title="物联网综合项目" Height="578.4" Width="1338">
+    <Grid>
+        <GroupBox Header="监控信息" Height="243" Width="206" Margin="10,0,0,10.2" VerticalAlignment="Bottom" RenderTransformOrigin="-0.141,0.559"
+                  HorizontalAlignment="Left">
+            <Grid Margin="10,0,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="13*"/>
+                    <ColumnDefinition Width="79*"/>
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="txtStatus" Height="72" Margin="0,10,1.6,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
+                <Button x:Name="BtnReceive" Click="BtnReceive_Click" Content="实时温湿度数据" Margin="0,96,0,83.8" Grid.ColumnSpan="2"/>
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Header="串口设置" Height="262" Width="206" Margin="10,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Left">
+            <Grid HorizontalAlignment="Left" Width="196" Margin="0,0,0,2">
+                <Label Content="接收端口：" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" />
+                <ComboBox x:Name="cmbPort" HorizontalAlignment="Left" Margin="76,13,0,0" VerticalAlignment="Top" Width="77"/>
+                <Label Content="数据位："  HorizontalAlignment="Left" Margin="10,120,0,0" VerticalAlignment="Top" />
+                <ComboBox x:Name="cmbDataBits" HorizontalAlignment="Left" Margin="76,123,0,0" VerticalAlignment="Top" Width="77"
+                          >
+                    <ListBoxItem Content="8"/>
+                    <ListBoxItem Content="7"/>
+                    <ListBoxItem Content="6"/>
+                    <ListBoxItem Content="5"/>
+                </ComboBox>
+                <Label Content="奇偶校验："  HorizontalAlignment="Left" Margin="8,85,0,0" VerticalAlignment="Top"/>
+                <ComboBox x:Name="cmbParity" HorizontalAlignment="Left" Margin="76,88,0,0" VerticalAlignment="Top" Width="77"
+                          >
+                    <ListBoxItem Content="None"/>
+                    <ListBoxItem Content="Odd"/>
+                    <ListBoxItem Content="Even"/>
+                </ComboBox>
+                <Label Content="波特率："  HorizontalAlignment="Left" Margin="11,45,0,0" VerticalAlignment="Top"/>
+                <ComboBox x:Name="cmbBaudRate" HorizontalAlignment="Left" Margin="76,49,0,0" VerticalAlignment="Top" Width="77"
+                          RenderTransformOrigin="-0.351,3.905">
+                    <ListBoxItem Content="9600"/>
+                    <ListBoxItem Content="19200"/>
+                    <ListBoxItem Content="38400"/>
+                    <ListBoxItem Content="57600"/>
+                    <ListBoxItem Content="115200"/>
+                </ComboBox>
+
+                <Label Content="停止位："  HorizontalAlignment="Left" Margin="11,155,0,0" VerticalAlignment="Top"/>
+                <ComboBox x:Name="cmbStopBits" HorizontalAlignment="Left" Margin="76,159,0,0" VerticalAlignment="Top" Width="77"
+                          RenderTransformOrigin="-0.276,3.36" >
+                    <ListBoxItem Content="One"/>
+                    <ListBoxItem Content="Two"/>
+                    <ListBoxItem Content="OnePointFive"/>
+                    <ListBoxItem Content="None"/>
+                </ComboBox>
+                <Button x:Name="btnOpen" Click="btnOpen_Click" Content="打开串口"  HorizontalAlignment="Left" Margin="12,200,0,0" VerticalAlignment="Top"
+                        Width="141"/>
+            </Grid>
+        </GroupBox>
+        <Demo_3_4_WpfControlLibrary:CurveControl x:Name="CurveCtr" Margin="221,58,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="462"  Width="545"/>
+        <Demo_3_4_WpfControlLibrary:BarControl x:Name="BarCtr" Margin="766,41,-8,10.2"  Width="565"/>
+        <Button x:Name="btn_salve" Content="保存数据" HorizontalAlignment="Left" Margin="28,460,0,0" VerticalAlignment="Top" Width="181" Height="38" Click="Btn_salve_Click"/>
+    </Grid>
+</Window>
