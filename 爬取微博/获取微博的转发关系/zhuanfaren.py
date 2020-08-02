@@ -10,10 +10,12 @@ headers = {
     "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36",
 }
 
+#统一使用一个headers减轻服务器压力
 session = requests.session()
 session.headers = headers
 
 def get_statua(i):
+    #读取当前页面信息
     url = 'https://weibo.cn/2656274875/profile?keyword=%E8%82%BA%E7%82%8E&hasori=0&haspic=0&starttime=20200101&endtime=20200726&advancedfilter=1&page={}'.format(i)
     html = session.get(url)
     if html.status_code == 200:
@@ -36,10 +38,14 @@ def get_html(html):
     #     biaoti = title.xpath("./a/text()")[0]
     #     print(biaoti)
     #     shijina_txt(biaoti)
+    #定位当前页面的转发
     urls = soup.xpath('//div[@class = "c"]')
     for url in urls[:-2]:
+        #获取他的转发次数
         neirong = url.xpath("./div/a/text()")[-3].replace("转发[","").replace("]","")
+        #获取它的URL
         hrefs = url.xpath("./div/a/@href")[-3]
+        #获取他的页数，页数是等于转发次数除以10加1就是总的转发页数了
         yeshu = int(neirong)//10
         print(yeshu,hrefs)
         # href = " https://weibo.cn/repost/JcH5N1ftY?uid=2656274875&rl=1"
@@ -50,12 +56,14 @@ def get_html(html):
 
 def get_pinglun(href,yeshu):
     try:
+        #根据获取的转发URL进入到转发里面
         for i in range(1,int(yeshu)+1):
             url = "{}&page={}".format(href,i)
             html = session.get(url)
             content = html.text
             soup = etree.HTML(content.encode('utf-8'))
             names = soup.xpath('//div[@class = "c"]')
+            #从而获取转发人的名字
             for name in names[3:-1]:
                 title = name.xpath('./a/text()')[0]
                 print(title,end=",")

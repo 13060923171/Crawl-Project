@@ -9,7 +9,9 @@ headers = {
 }
 keyword = input("请输入你要搜索的关键词:")
 list = []
+#搜索关键词一次性只有100页的内容
 for i in range(1,101,1):
+    #构建页数的URL，写入列表里面
     url = "https://weibo.cn/search/mblog?hideSearchFrame=&keyword={}&advancedfilter=1&hasori=1&starttime=20200301&endtime=20200701&sort=hot&page={}".format(parse.quote(keyword),i)
     list.append(url)
 
@@ -24,13 +26,10 @@ def get_statue(url):
 def get_html(html):
     content = html.text
     soup = etree.HTML(content.encode('utf-8'))
+    #去定位到每一页里面的内容
     titles = soup.xpath('//div[@class = "c"]/div/span[@class = "ctt"]/text()')
     for title in titles:
-        wenzhang = title.strip().replace(":","").replace("“","").replace("”","").replace("🚀","").replace("🍵","茶").\
-            replace("🦐","虾").replace("🥺","").replace("👊","拳").replace("🐷","猪").replace("🙏","").replace("😢","").\
-            replace("🤮","作呕").replace("�","").replace("🤗","").replace("🌈","").replace("🤦🏻♀","染色体").replace("😅","").\
-            replace("🙏","").replace("📖","书").replace("(/ﾟДﾟ)/","吃惊").replace("😊","").replace("ಠ_ಠ","").replace("😌","").\
-            replace("💅🏻","").replace("🐔","鸡")
+        wenzhang = title.strip()
         print(wenzhang)
         write_text(wenzhang)
 
@@ -42,6 +41,7 @@ def write_text(neirong):
 
 if __name__ == '__main__':
     s = time.time()
+    #开启多线程去跑，爬取一百页的内容提高我们的工作效率
     with concurrent.futures.ThreadPoolExecutor(max_workers = 5)as e:
         futures = [e.submit(get_statue,i) for i in list]
         for future in concurrent.futures.as_completed(futures):
