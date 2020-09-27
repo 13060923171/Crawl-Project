@@ -7,38 +7,39 @@ from urllib.parse import quote
 from pyquery import PyQuery
 import time
 import json
+import re
 #定义一个变量，最好用大写这个是约定俗成
 KEYWORD = '月饼'
 #定位Chromedriver这个工具的位置
-browser = webdriver.Chrome("C:\\Users\\96075\\Desktop\\作业文档\\Python\\爬虫\\chromedriver.exe")
+browser = webdriver.Chrome(executable_path="C:\\Users\\96075\\Desktop\\全部资料\\Python\\爬虫\\chromedriver.exe")
 #设置等待时间
 wait = WebDriverWait(browser,10)
+url ='https://www.taobao.com/'
 
-def crawl_page(page):
+def crawl_page():
     try:
-        #爬取这个页面，quote的作用就是将我们输入的文字转化成计算机看得懂的文字
-        url = "https://s.taobao.com/search?q="+quote(KEYWORD)
-        #然后用我们的工具去获取这个页面的信息
-        browser.get(url)
-        time.sleep(5)
-        #如果页面大于1，则执行下一步
-        if page>1:
-            #先是定位到下一页的位置，这里我们用到的是selenium语法
-            page_box = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR,"input.input.J_Input")))
-            #然后点击按钮，实现页面跳转
-            sumbit_button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR,"span.btn.J_Submit")))
-            #然后关闭
-            page_box.clear()
-            #发送页数到page这个参数里面
-            page_box.send_keys(page)
-            #停止点击事件
-            sumbit_button.click()
-        #等待这个页面的施行
-        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, ".m-itemlist .items .item")))
-        #去爬取这个页面的信息
-        get_products()
+        browser.get(url)#获取网页
+        input = wait.until(EC.presence_of_element_located((
+            By.XPATH,'//*[@id="q"]'
+        )))#等到输入框加载出来
+        button = wait.until(EC.element_to_be_clickable((
+            By.XPATH,'//*[@id="J_TSearchForm"]/div[1]/button'
+        )))#等到搜索框加载出来
+        input.send_keys(KEYWORD)#输入关键词
+        button.click()#模拟鼠标点击
+        total = wait.until(EC.presence_of_element_located((
+            By.XPATH,'//*[@id="mainsrp-pager"]/div/div/div/div[1]'
+        ))).text#等到python爬虫页面的总页数加载出来
+        total = re.sub(r',|，','',total)#发现总页数有逗号
+        #数据清洗，将共100页后面的逗号去掉,淘宝里的是大写的逗号
+        print(total)
+        totalnum = int(re.compile('(\d+)').search(total).group(1))
+        # 只取出100这个数字
+        print("第1页:")
+        get_products()#获取数据(下面才写到)
+        return totalnum
     except:
-        crawl_page(page)
+        crawl_page()
 
 def get_products():
     #用工具去爬取这个页面
@@ -67,11 +68,21 @@ def save_to_file(result):
         f.write(json.dumps(result,ensure_ascii=False)+"\n")
         print("存储到text成功")
 
-#最大页数
-MAX_PAGE = 100
+def next_page():
+    totalnum = crawl_page()#获取总页数的值，并且调用search获取第一页数据
+    num = 1#初始为1，因为我第一页已经获取过数据了
+    while num != totalnum - 1:#首先进来的是第1页，共100页，所以只需要翻页99次
+        print("第%s页:" %str(num+1) )
+        browser.get('https://s.taobao.com/search?q={}&s={}'.format(KEYWORD,44 * num))
+        #用修改s属性的方式翻页
+        browser.implicitly_wait(10)
+        #等待10秒
+        get_products()#获取数据
+        time.sleep(3)
+        num +=1#自增
+
 #写一个循环函数，用于爬取多页信息的内容
 def main():
-    for i in range(1,MAX_PAGE+1):
-        crawl_page(i)
+    next_page()
 if __name__ == '__main__':
     main()
