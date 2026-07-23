@@ -1,5 +1,0 @@
-pillow
-requests
-selenium
-lxml
-bs4
